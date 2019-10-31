@@ -1,10 +1,11 @@
 package client.boundary;
 
+import api.dto.ExceptionDTO;
 import client.control.ClientService;
 import client.entity.Client;
 import client.entity.exception.ClientDoesNotExistException;
 import com.google.gson.Gson;
-import controller.RestControllerWithExceptionHandling;
+import api.controller.RestControllerWithExceptionHandling;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.ExceptionHandler;
 import spark.Request;
@@ -12,7 +13,7 @@ import spark.Route;
 
 import javax.inject.Inject;
 
-import static controller.ControllerUtils.parseIdFromNamedQueryParams;
+import static api.controller.ControllerUtils.parseIdFromNamedQueryParams;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
 import static spark.Spark.get;
@@ -96,8 +97,15 @@ public class ClientController implements RestControllerWithExceptionHandling {
 
     private ExceptionHandler<ClientDoesNotExistException> setupClientDoesNotExistExceptionMapping() {
         return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
             res.status(HttpStatus.NOT_FOUND_404);
-            res.body(gson.toJson(ex.getMessage()));
+            res.body(gson.toJson(exceptionDTO));
         };
+    }
+
+    private ExceptionDTO mapToExceptionDTO(ClientDoesNotExistException exception) {
+        String message = exception.getMessage();
+        return new ExceptionDTO(message);
     }
 }

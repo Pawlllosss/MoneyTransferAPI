@@ -1,4 +1,4 @@
-package controller;
+package api.controller;
 
 public interface RestController {
 
