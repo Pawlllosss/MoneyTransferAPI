@@ -5,12 +5,28 @@ plugins {
 group 'pl.oczadly.money.api'
 version '1.0-SNAPSHOT'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.12'
+    implementation group: 'com.sparkjava', name: 'spark-core', version: '2.9.1'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.28'
+    implementation group: 'org.hibernate', name: 'hibernate-core', version: '5.4.7.Final'
+    implementation group: 'com.h2database', name: 'h2', version: '1.4.200'
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
+    implementation group: 'com.google.inject', name: 'guice', version: '4.2.2'
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: '5.3.2'
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: '3.0.0'
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
+    testImplementation group: 'org.assertj', name: 'assertj-core', version: '3.6.1'
+
+    testRuntime group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: '5.3.2'
+}
+
+test {
+    useJUnitPlatform()
 }
