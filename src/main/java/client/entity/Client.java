@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity(name = "client")
@@ -23,7 +24,7 @@ public class Client {
 
     private String surname;
 
-    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Account> accounts;
 
     public Client() {
@@ -33,6 +34,32 @@ public class Client {
     public void addAccount(Account account) {
         account.setClient(this);
         accounts.add(account);
+    }
+
+    public void removeAccount(Account account) {
+        account.setClient(null);
+        accounts.remove(account);
+    }
+
+    @Override
+    public boolean equals(Object objectToCompare) {
+        if (this == objectToCompare) {
+            return true;
+        }
+
+        if (objectToCompare == null || getClass() != objectToCompare.getClass()) {
+            return false;
+        }
+        Client client = (Client) objectToCompare;
+
+        return Objects.equals(id, client.id) &&
+                Objects.equals(firstName, client.firstName) &&
+                Objects.equals(surname, client.surname);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, surname);
     }
 
     public Long getId() {

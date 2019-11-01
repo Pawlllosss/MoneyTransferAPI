@@ -10,7 +10,7 @@ public interface AccountService {
 
     Account createAccount(AccountCreateDTO accountCreateDTO);
 
-    List<Account> getAllAccount();
+    List<Account> getAllAccounts();
 
     Account getAccountById(Long id);
 

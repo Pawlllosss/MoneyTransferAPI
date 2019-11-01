@@ -12,6 +12,4 @@ public interface AccountDAO {
     Optional<Account> getById(Long id);
 
     void update(Long id, Account account);
-
-    void delete(Long id);
 }

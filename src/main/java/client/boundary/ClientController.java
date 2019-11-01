@@ -56,7 +56,7 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Client persistedClient = clientService.createClient(client);
 
             res.status(HttpStatus.CREATED_201);
-            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(client);
+            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(persistedClient);
             return gson.toJson(clientResponseDTO);
         };
     }
@@ -111,7 +111,7 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Long id = parseIdFromNamedQueryParams(req);
             Client client = parseClientFromRequestBody(req);
             Client updatedClient = clientService.updateClient(id, client);
-            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(client);
+            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(updatedClient);
 
             return gson.toJson(clientResponseDTO);
         };

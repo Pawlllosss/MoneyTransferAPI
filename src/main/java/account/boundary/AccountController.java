@@ -6,6 +6,8 @@ import account.entity.dto.AccountCreateDTO;
 import account.entity.dto.AccountOperationDTO;
 import account.entity.dto.AccountResponseDTO;
 import account.entity.exception.AccountDoesNotExistException;
+import account.entity.exception.IncorrectAccountOperationAmount;
+import account.entity.exception.InsufficientFundsException;
 import api.controller.RestControllerWithExceptionHandling;
 import api.dto.ExceptionDTO;
 import com.google.gson.Gson;
@@ -67,7 +69,7 @@ public class AccountController implements RestControllerWithExceptionHandling {
 
     private Route setupGetAllAccountsEndpoint() {
         return (req, res) -> {
-            List<Account> allAccounts = accountService.getAllAccount();
+            List<Account> allAccounts = accountService.getAllAccounts();
 
             List<AccountResponseDTO> accountResponseDTO = allAccounts.stream()
                     .map(AccountMapperUtils::mapToAccountResponseDTO)
@@ -125,6 +127,8 @@ public class AccountController implements RestControllerWithExceptionHandling {
     @Override
     public void setExceptionHandling() {
         exception(AccountDoesNotExistException.class, setupAccountDoesNotExistExceptionMapping());
+        exception(IncorrectAccountOperationAmount.class, setupIncorrectAccountOperationAmountExceptionMapping());
+        exception(InsufficientFundsException.class, setupInsufficientFundsExceptionMapping());
     }
 
     private ExceptionHandler<AccountDoesNotExistException> setupAccountDoesNotExistExceptionMapping() {
@@ -132,6 +136,24 @@ public class AccountController implements RestControllerWithExceptionHandling {
             ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
 
             res.status(HttpStatus.NOT_FOUND_404);
+            res.body(gson.toJson(exceptionDTO));
+        };
+    }
+
+    private ExceptionHandler<IncorrectAccountOperationAmount> setupIncorrectAccountOperationAmountExceptionMapping() {
+        return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
+            res.status(HttpStatus.BAD_REQUEST_400);
+            res.body(gson.toJson(exceptionDTO));
+        };
+    }
+
+    private ExceptionHandler<InsufficientFundsException> setupInsufficientFundsExceptionMapping() {
+        return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
+            res.status(HttpStatus.BAD_REQUEST_400);
             res.body(gson.toJson(exceptionDTO));
         };
     }
