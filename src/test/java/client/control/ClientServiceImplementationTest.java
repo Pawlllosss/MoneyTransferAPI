@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static client.ClientTestUtils.createClient;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -40,14 +41,6 @@ class ClientServiceImplementationTest {
         MockitoAnnotations.initMocks(this);
         clientService = new ClientServiceImplementation(clientDAO);
     }
-
-    private Client createClient(String firstName, String surname) {
-        Client client = new Client();
-        client.setFirstName(firstName);
-        client.setSurname(surname);
-        return client;
-    }
-
 
     @Test
     void shouldCallClientDAOCreateOnceWhenTryingToCreateClient() {

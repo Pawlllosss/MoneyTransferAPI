@@ -1,6 +1,8 @@
 package api.configuration;
 
 import client.boundary.ClientController;
+import com.google.inject.Guice;
+import com.google.inject.Injector;
 
 import javax.inject.Inject;
 
@@ -9,6 +11,11 @@ import static spark.Spark.before;
 public class ApiInitializer {
 
     private ClientController clientController;
+
+    public static void startApplication() {
+        Injector injector = Guice.createInjector(new ApiModule());
+        injector.getInstance(ApiInitializer.class).run();
+    }
 
     @Inject
     public ApiInitializer(ClientController clientController) {

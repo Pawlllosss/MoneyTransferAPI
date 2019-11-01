@@ -74,7 +74,7 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Client client = parseClientFromRequestBody(req);
             Client updatedClient = clientService.updateClient(id, client);
 
-            res.status(HttpStatus.NO_CONTENT_204);
+            res.status(HttpStatus.OK_200);
             return gson.toJson(updatedClient);
         };
     }
@@ -84,7 +84,7 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Long id = parseIdFromNamedQueryParams(req);
             clientService.deleteClient(id);
 
-            res.status(HttpStatus.ACCEPTED_202);
+            res.status(HttpStatus.NO_CONTENT_204);
             return "";
         };
 
