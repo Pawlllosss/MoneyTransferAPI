@@ -8,7 +8,7 @@ public class ClientTestUtils {
     }
 
 
-    public static Client createClient(String firstName, String surname) {
+    public static Client createClientEntity(String firstName, String surname) {
         Client client = new Client();
         client.setFirstName(firstName);
         client.setSurname(surname);

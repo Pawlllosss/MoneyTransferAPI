@@ -38,7 +38,7 @@ class ClientControllerTest {
 
     @Test
     void shouldReturn201AndCreatedClientWhenTryingToCreateClient() {
-        Client client = ClientTestUtils.createClient(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
+        Client client = ClientTestUtils.createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
         client.setId(CLIENT_1_ID);
 
         given().body(client)
@@ -85,7 +85,7 @@ class ClientControllerTest {
 
     @Test
     void shouldReturn200AndUpdateClientWhenTryingToUpdateExistingClient() {
-        Client client = ClientTestUtils.createClient(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
+        Client client = ClientTestUtils.createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
 
         given().body(client)
                 .when()
@@ -100,7 +100,7 @@ class ClientControllerTest {
 
     @Test
     void shouldReturn404WhenTryingToUpdateNotExistingClient() {
-        Client client = ClientTestUtils.createClient(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
+        Client client = ClientTestUtils.createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
 
         given().body(client)
                 .when()

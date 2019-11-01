@@ -17,9 +17,9 @@ public class ClientServiceStub implements ClientService {
 
     @Override
     public List<Client> getAllClients() {
-        Client client1 = ClientTestUtils.createClient(ClientControllerTest.CLIENT_1_FIRST_NAME, ClientControllerTest.CLIENT_1_SURNAME);
+        Client client1 = ClientTestUtils.createClientEntity(ClientControllerTest.CLIENT_1_FIRST_NAME, ClientControllerTest.CLIENT_1_SURNAME);
         client1.setId(ClientControllerTest.CLIENT_1_ID);
-        Client client2 = ClientTestUtils.createClient(ClientControllerTest.CLIENT_2_FIRST_NAME, ClientControllerTest.CLIENT_2_SURNAME);
+        Client client2 = ClientTestUtils.createClientEntity(ClientControllerTest.CLIENT_2_FIRST_NAME, ClientControllerTest.CLIENT_2_SURNAME);
         client2.setId(ClientControllerTest.CLIENT_2_ID);
 
         return List.of(client1, client2);
@@ -31,7 +31,7 @@ public class ClientServiceStub implements ClientService {
             throw new ClientDoesNotExistException(id);
         }
 
-        Client client = ClientTestUtils.createClient(ClientControllerTest.CLIENT_1_FIRST_NAME, ClientControllerTest.CLIENT_1_SURNAME);
+        Client client = ClientTestUtils.createClientEntity(ClientControllerTest.CLIENT_1_FIRST_NAME, ClientControllerTest.CLIENT_1_SURNAME);
         client.setId(id);
         return client;
     }

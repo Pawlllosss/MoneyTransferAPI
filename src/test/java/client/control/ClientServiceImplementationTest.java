@@ -12,7 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
-import static client.ClientTestUtils.createClient;
+import static client.ClientTestUtils.createClientEntity;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
@@ -37,7 +37,7 @@ class ClientServiceImplementationTest {
     private ClientDAO clientDAO;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         MockitoAnnotations.initMocks(this);
         clientService = new ClientServiceImplementation(clientDAO);
     }
@@ -74,9 +74,9 @@ class ClientServiceImplementationTest {
     }
 
     private void mockClientDAOGetAll() {
-        Client client1 = createClient(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
-        Client client2 = createClient(CLIENT_2_FIRST_NAME, CLIENT_2_SURNAME);
-        Client client3 = createClient(CLIENT_3_FIRST_NAME, CLIENT_3_SURNAME);
+        Client client1 = createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
+        Client client2 = createClientEntity(CLIENT_2_FIRST_NAME, CLIENT_2_SURNAME);
+        Client client3 = createClientEntity(CLIENT_3_FIRST_NAME, CLIENT_3_SURNAME);
         List<Client> allClients = List.of(client1, client2, client3);
 
         given(clientDAO.getAll()).willReturn(allClients);
@@ -99,7 +99,7 @@ class ClientServiceImplementationTest {
     }
 
     private void mockClientDAOGetById() {
-        Client client = createClient(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
+        Client client = createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
         client.setId(CLIENT_1_ID);
         given(clientDAO.getById(CLIENT_1_ID)).willReturn(Optional.of(client));
     }
