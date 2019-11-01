@@ -1,5 +1,6 @@
 package api.configuration;
 
+import account.boundary.AccountController;
 import client.boundary.ClientController;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
@@ -12,14 +13,17 @@ public class ApiInitializer {
 
     private ClientController clientController;
 
+    private AccountController accountController;
+
     public static void startApplication() {
         Injector injector = Guice.createInjector(new ApiModule());
         injector.getInstance(ApiInitializer.class).run();
     }
 
     @Inject
-    public ApiInitializer(ClientController clientController) {
+    public ApiInitializer(ClientController clientController, AccountController accountController) {
         this.clientController = clientController;
+        this.accountController = accountController;
     }
 
     public void run() {
@@ -27,6 +31,9 @@ public class ApiInitializer {
 
         clientController.setupEndpoints();
         clientController.setExceptionHandling();
+
+        accountController.setupEndpoints();
+        accountController.setExceptionHandling();
     }
 
     private void setJsonContentTypeHeaderToResponse() {
