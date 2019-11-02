@@ -7,6 +7,7 @@ import pl.oczadly.money.api.account.entity.exception.AccountOperationNotSuccessf
 import pl.oczadly.money.api.account.entity.exception.AccountTransferNotSuccessfulException;
 import pl.oczadly.money.api.account.entity.exception.IncorrectAccountOperationAmount;
 import pl.oczadly.money.api.account.entity.exception.InsufficientFundsException;
+import pl.oczadly.money.api.account.entity.exception.TransferToIdenticalAccountException;
 
 import javax.inject.Inject;
 import java.math.BigDecimal;
@@ -157,7 +158,7 @@ public class AccountOperationServiceImplementation implements AccountOperationSe
         Long accountToId = accountTransferDTO.getIdTo();
 
         if (!doAccountIdsDiffer(accountFromId, accountToId)) {
-            throw new IllegalStateException("Trying to transfer money to the same account");
+            throw new TransferToIdenticalAccountException();
         }
 
         Account accountFrom = accountService.getAccountById(accountFromId);

@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import org.eclipse.jetty.http.HttpStatus;
 import pl.oczadly.money.api.account.control.AccountService;
 import pl.oczadly.money.api.account.entity.Account;
+import pl.oczadly.money.api.account.entity.exception.TransferToIdenticalAccountException;
 import pl.oczadly.money.api.api.controller.RestControllerWithExceptionHandling;
 import pl.oczadly.money.api.api.dto.ExceptionDTO;
 import spark.ExceptionHandler;
@@ -156,6 +157,7 @@ public class AccountController implements RestControllerWithExceptionHandling {
         exception(AccountTransferNotSuccessfulException.class, setupAccountTransferNotSuccessfulExceptionMapping());
         exception(IncorrectAccountOperationAmount.class, setupIncorrectAccountOperationAmountExceptionMapping());
         exception(InsufficientFundsException.class, setupInsufficientFundsExceptionMapping());
+        exception(TransferToIdenticalAccountException.class, setupTransferToIdenticalAccountExceptionMapping());
     }
 
     private ExceptionHandler<AccountDoesNotExistException> setupAccountDoesNotExistExceptionMapping() {
@@ -195,6 +197,15 @@ public class AccountController implements RestControllerWithExceptionHandling {
     }
 
     private ExceptionHandler<InsufficientFundsException> setupInsufficientFundsExceptionMapping() {
+        return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
+            res.status(HttpStatus.BAD_REQUEST_400);
+            res.body(gson.toJson(exceptionDTO));
+        };
+    }
+
+    private ExceptionHandler<TransferToIdenticalAccountException> setupTransferToIdenticalAccountExceptionMapping() {
         return (ex, req, res) -> {
             ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
 
