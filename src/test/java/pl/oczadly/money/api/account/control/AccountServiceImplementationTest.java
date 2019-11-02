@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static pl.oczadly.money.api.account.AccountTestUtils.createAccountCreateDTO;
 
 @ExtendWith(MockitoExtension.class)
 class AccountServiceImplementationTest {
@@ -56,7 +57,7 @@ class AccountServiceImplementationTest {
         Client client = ClientTestUtils.createClientEntity(CLIENT_FIRST_NAME, CLIENT_SURNAME);
         mockClientServiceGetClientById(CLIENT_ID, client);
         mockClientServiceUpdateClient(CLIENT_ID, client);
-        AccountCreateDTO accountCreateDTO = createAccountCreateDTO(CLIENT_ID);
+        AccountCreateDTO accountCreateDTO = createAccountCreateDTO(0d, CLIENT_ID);
 
         accountService.createAccount(accountCreateDTO);
 
@@ -73,13 +74,6 @@ class AccountServiceImplementationTest {
 
     }
 
-    private AccountCreateDTO createAccountCreateDTO(Long clientId) {
-        AccountCreateDTO accountCreateDTO = new AccountCreateDTO();
-        accountCreateDTO.setBalance(0d);
-        accountCreateDTO.setClientId(clientId);
-        return accountCreateDTO;
-    }
-
     private void verifyClientServiceGetClientIdCalledOnce(Long clientId) {
         verify(clientService, times(1)).getClientById(clientId);
     }
@@ -91,7 +85,7 @@ class AccountServiceImplementationTest {
     @Test
     void shouldThrowClientDoesNotExistExceptionWhenTryingToCreateAccountForNotExistingClient() {
         mockClientServiceGetClientByIdToThrowClientDoesNotExistException(NOT_EXISTING_CLIENT_ID);
-        AccountCreateDTO accountCreateDTO = createAccountCreateDTO(NOT_EXISTING_CLIENT_ID);
+        AccountCreateDTO accountCreateDTO = createAccountCreateDTO(0d, NOT_EXISTING_CLIENT_ID);
 
         assertThrows(ClientDoesNotExistException.class, () -> accountService.createAccount(accountCreateDTO));
         verifyClientServiceGetClientIdCalledOnce(NOT_EXISTING_CLIENT_ID);

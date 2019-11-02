@@ -39,7 +39,6 @@ class ClientControllerTest {
     @Test
     void shouldReturn201AndCreatedClientWhenTryingToCreateClient() {
         Client client = ClientTestUtils.createClientEntity(CLIENT_1_FIRST_NAME, CLIENT_1_SURNAME);
-        client.setId(CLIENT_1_ID);
 
         given().body(client)
                 .when()

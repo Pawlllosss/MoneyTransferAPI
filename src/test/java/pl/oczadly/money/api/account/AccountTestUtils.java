@@ -1,6 +1,7 @@
 package pl.oczadly.money.api.account;
 
 import pl.oczadly.money.api.account.entity.Account;
+import pl.oczadly.money.api.account.entity.dto.AccountCreateDTO;
 import pl.oczadly.money.api.client.entity.Client;
 
 import java.math.BigDecimal;
@@ -17,4 +18,13 @@ public class AccountTestUtils {
 
         return account;
     }
+
+    public static AccountCreateDTO createAccountCreateDTO(Double balance, Long clientId) {
+        AccountCreateDTO accountCreateDTO = new AccountCreateDTO();
+        accountCreateDTO.setBalance(balance);
+        accountCreateDTO.setClientId(clientId);
+
+        return accountCreateDTO;
+    }
+
 }
