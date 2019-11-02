@@ -9,8 +9,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.math.BigDecimal;
 import java.util.Objects;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 @Entity(name = "account")
 @Table(name = "account")
@@ -26,6 +29,13 @@ public class Account {
     @ManyToOne
     @JoinColumn(name = "client_id", nullable = false)
     private Client client;
+
+    @Transient
+    private final Lock lock;
+
+    public Account() {
+        lock = new ReentrantLock();
+    }
 
     @Override
     public boolean equals(Object objectToCompare) {
@@ -69,5 +79,9 @@ public class Account {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Lock getLock() {
+        return lock;
     }
 }

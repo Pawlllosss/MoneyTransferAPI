@@ -3,10 +3,7 @@ package account.control;
 import account.AccountTestUtils;
 import account.entity.Account;
 import account.entity.dto.AccountCreateDTO;
-import account.entity.dto.AccountOperationDTO;
 import account.entity.exception.AccountDoesNotExistException;
-import account.entity.exception.IncorrectAccountOperationAmount;
-import account.entity.exception.InsufficientFundsException;
 import client.ClientTestUtils;
 import client.control.ClientService;
 import client.entity.Client;
@@ -23,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -160,88 +157,6 @@ class AccountServiceImplementationTest {
     @Test
     void shouldThrowAccountDoesNotExistExceptionWhenTryingToGetAccountByNotExistingId() {
         assertThrows(AccountDoesNotExistException.class, () -> accountService.getAccountById(NOT_EXISTING_ACCOUNT_ID));
-    }
-
-    @Test
-    void shouldCallAccountDAOUpdateOnceWhenTryingToWithdrawMoney() {
-        Client client = ClientTestUtils.createClientEntity(CLIENT_FIRST_NAME, CLIENT_SURNAME);
-        client.setId(CLIENT_ID);
-        Account account = AccountTestUtils.createAccountEntity(ACCOUNT_1_BALANCE, client);
-        account.setId(ACCOUNT_1_ID);
-        mockAccountDAOGetById(account);
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, ACCOUNT_1_BALANCE.doubleValue());
-
-        accountService.withdrawMoney(accountOperationDTO);
-
-        verifyAccountDAOUpdateCalledOnce(ACCOUNT_1_ID, account);
-    }
-
-    private AccountOperationDTO createAccountOperationDTO(Long id, double amount) {
-        AccountOperationDTO accountOperationDTO = new AccountOperationDTO();
-        accountOperationDTO.setId(id);
-        accountOperationDTO.setAmount(amount);
-
-        return accountOperationDTO;
-    }
-
-    private void verifyAccountDAOUpdateCalledOnce(Long id, Account account) {
-        verify(accountDAO, times(1)).update(id, account);
-    }
-
-    @Test
-    void shouldThrowAccountDoesNotExistExceptionWhenTryingToWithdrawMoneyByNotExistingId() {
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(NOT_EXISTING_ACCOUNT_ID, 1);
-
-        assertThrows(AccountDoesNotExistException.class, () -> accountService.withdrawMoney(accountOperationDTO));
-    }
-
-    @Test
-    void shouldThrowIncorrectAccountOperationAmountWhenTryingToWithdrawZeroMoney() {
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 0);
-
-        assertThrows(IncorrectAccountOperationAmount.class, () -> accountService.withdrawMoney(accountOperationDTO));
-    }
-
-    @Test
-    void shouldThrowInsufficientFundsExceptionWhenTryingToWithdrawMoneyFromAccountWithInsufficientFunds() {
-        Client client = ClientTestUtils.createClientEntity(CLIENT_FIRST_NAME, CLIENT_SURNAME);
-        client.setId(CLIENT_ID);
-        BigDecimal insufficientBalance = ACCOUNT_1_BALANCE.subtract(new BigDecimal("1"));
-        Account account = AccountTestUtils.createAccountEntity(insufficientBalance, client);
-        account.setId(ACCOUNT_1_ID);
-        mockAccountDAOGetById(account);
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, ACCOUNT_1_BALANCE.doubleValue());
-
-        assertThrows(InsufficientFundsException.class, () -> accountService.withdrawMoney(accountOperationDTO));
-    }
-
-
-    @Test
-    void shouldCallAccountDAOUpdateOnceWhenTryingToDepositMoney() {
-        Client client = ClientTestUtils.createClientEntity(CLIENT_FIRST_NAME, CLIENT_SURNAME);
-        client.setId(CLIENT_ID);
-        Account account = AccountTestUtils.createAccountEntity(ACCOUNT_1_BALANCE, client);
-        account.setId(ACCOUNT_1_ID);
-        mockAccountDAOGetById(account);
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 1);
-
-        accountService.depositMoney(accountOperationDTO);
-
-        verifyAccountDAOUpdateCalledOnce(ACCOUNT_1_ID, account);
-    }
-
-    @Test
-    void shouldThrowAccountDoesNotExistExceptionWhenTryingToDepositMoneyByNotExistingId() {
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(NOT_EXISTING_ACCOUNT_ID, 1);
-
-        assertThrows(AccountDoesNotExistException.class, () -> accountService.depositMoney(accountOperationDTO));
-    }
-
-    @Test
-    void shouldThrowIncorrectAccountOperationAmountWhenTryingToDepositZeroMoney() {
-        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 0);
-
-        assertThrows(IncorrectAccountOperationAmount.class, () -> accountService.depositMoney(accountOperationDTO));
     }
 
     @Test

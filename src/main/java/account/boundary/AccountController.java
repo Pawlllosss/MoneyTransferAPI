@@ -1,11 +1,15 @@
 package account.boundary;
 
+import account.control.AccountOperationService;
 import account.control.AccountService;
 import account.entity.Account;
 import account.entity.dto.AccountCreateDTO;
 import account.entity.dto.AccountOperationDTO;
 import account.entity.dto.AccountResponseDTO;
+import account.entity.dto.AccountTransferDTO;
 import account.entity.exception.AccountDoesNotExistException;
+import account.entity.exception.AccountOperationNotSuccessfulException;
+import account.entity.exception.AccountTransferNotSuccessfulException;
 import account.entity.exception.IncorrectAccountOperationAmount;
 import account.entity.exception.InsufficientFundsException;
 import api.controller.RestControllerWithExceptionHandling;
@@ -18,6 +22,7 @@ import spark.Route;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static account.boundary.AccountMapperUtils.mapToAccountResponseDTO;
@@ -33,11 +38,13 @@ public class AccountController implements RestControllerWithExceptionHandling {
     private static String ACCOUNT_PATH = "/account";
 
     private AccountService accountService;
+    private AccountOperationService accountOperationService;
     private Gson gson;
 
     @Inject
-    public AccountController(AccountService accountService, Gson gson) {
+    public AccountController(AccountService accountService, AccountOperationService accountOperationService, Gson gson) {
         this.accountService = accountService;
+        this.accountOperationService = accountOperationService;
         this.gson = gson;
     }
 
@@ -48,6 +55,7 @@ public class AccountController implements RestControllerWithExceptionHandling {
         get(ACCOUNT_PATH + "/:id", setupGetAccountByIdEndpoint());
         post(ACCOUNT_PATH + "/withdraw", setupWithdrawMoneyEndpoint());
         post(ACCOUNT_PATH + "/deposit", setupDepositMoneyEndpoint());
+        post(ACCOUNT_PATH + "/transfer", setupTransferMoneyEndpoint());
         delete(ACCOUNT_PATH + "/:id", setupDeleteAccountEndpoint());
     }
 
@@ -91,7 +99,7 @@ public class AccountController implements RestControllerWithExceptionHandling {
     private Route setupWithdrawMoneyEndpoint() {
         return (req, res) -> {
             AccountOperationDTO accountOperationDTO = parseAccountOperationDTOFromRequestBody(req);
-            Account account = accountService.withdrawMoney(accountOperationDTO);
+            Account account = accountOperationService.withdrawMoney(accountOperationDTO);
 
             AccountResponseDTO accountResponseDTO = mapToAccountResponseDTO(account);
             return gson.toJson(accountResponseDTO);
@@ -107,11 +115,28 @@ public class AccountController implements RestControllerWithExceptionHandling {
     private Route setupDepositMoneyEndpoint() {
         return (req, res) -> {
             AccountOperationDTO accountOperationDTO = parseAccountOperationDTOFromRequestBody(req);
-            Account account = accountService.depositMoney(accountOperationDTO);
+            Account account = accountOperationService.depositMoney(accountOperationDTO);
 
             AccountResponseDTO accountResponseDTO = mapToAccountResponseDTO(account);
             return gson.toJson(accountResponseDTO);
         };
+    }
+
+    private Route setupTransferMoneyEndpoint() {
+        return (req, res) -> {
+            AccountTransferDTO accountTransferDTO = parseAccountTransferDTOFromRequestBody(req);
+            Set<Account> accounts = accountOperationService.transferMoney(accountTransferDTO);
+
+            List<AccountResponseDTO> accountResponseDTO = accounts.stream()
+                    .map(AccountMapperUtils::mapToAccountResponseDTO)
+                    .collect(Collectors.toList());
+            return gson.toJson(accountResponseDTO);
+        };
+    }
+
+    private AccountTransferDTO parseAccountTransferDTOFromRequestBody(Request req) {
+        String requestBody = req.body();
+        return gson.fromJson(requestBody, AccountTransferDTO.class);
     }
 
     private Route setupDeleteAccountEndpoint() {
@@ -127,6 +152,8 @@ public class AccountController implements RestControllerWithExceptionHandling {
     @Override
     public void setExceptionHandling() {
         exception(AccountDoesNotExistException.class, setupAccountDoesNotExistExceptionMapping());
+        exception(AccountOperationNotSuccessfulException.class, setupAccountOperationNotSuccessfulExceptionMapping());
+        exception(AccountTransferNotSuccessfulException.class, setupAccountTransferNotSuccessfulExceptionMapping());
         exception(IncorrectAccountOperationAmount.class, setupIncorrectAccountOperationAmountExceptionMapping());
         exception(InsufficientFundsException.class, setupInsufficientFundsExceptionMapping());
     }
@@ -136,6 +163,24 @@ public class AccountController implements RestControllerWithExceptionHandling {
             ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
 
             res.status(HttpStatus.NOT_FOUND_404);
+            res.body(gson.toJson(exceptionDTO));
+        };
+    }
+
+    private ExceptionHandler<AccountOperationNotSuccessfulException> setupAccountOperationNotSuccessfulExceptionMapping() {
+        return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
+            res.status(HttpStatus.BAD_REQUEST_400);
+            res.body(gson.toJson(exceptionDTO));
+        };
+    }
+
+    private ExceptionHandler<AccountTransferNotSuccessfulException> setupAccountTransferNotSuccessfulExceptionMapping() {
+        return (ex, req, res) -> {
+            ExceptionDTO exceptionDTO = mapToExceptionDTO(ex);
+
+            res.status(HttpStatus.BAD_REQUEST_400);
             res.body(gson.toJson(exceptionDTO));
         };
     }

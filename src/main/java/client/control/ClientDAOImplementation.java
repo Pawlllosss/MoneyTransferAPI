@@ -5,6 +5,7 @@ import client.entity.exception.ClientDoesNotExistException;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +19,7 @@ public class ClientDAOImplementation implements ClientDAO {
     }
 
     @Override
+    @Transactional
     public void create(Client client) {
         entityManager.getTransaction().begin();
         entityManager.persist(client);
@@ -37,6 +39,7 @@ public class ClientDAOImplementation implements ClientDAO {
     }
 
     @Override
+    @Transactional
     public Client update(Long id, Client client) {
         Client clientToModify = getClientOrThrowException(id);
         clientToModify.setFirstName(client.getFirstName());

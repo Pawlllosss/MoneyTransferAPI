@@ -5,6 +5,7 @@ import account.entity.exception.AccountDoesNotExistException;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,16 +31,22 @@ public class AccountDAOImplementation implements AccountDAO {
     }
 
     @Override
+    @Transactional
     public void update(Long id, Account account) {
         getAccountOrThrowException(id);
         account.setId(id);
 
-        entityManager.getTransaction().begin();
         entityManager.merge(account);
-        entityManager.getTransaction().commit();
     }
 
     private Account getAccountOrThrowException(Long id) {
         return getById(id).orElseThrow(() -> new AccountDoesNotExistException(id));
+    }
+
+    @Override
+    @Transactional
+    public void update(Account account1, Account account2) {
+        entityManager.merge(account1);
+        entityManager.merge(account2);
     }
 }
