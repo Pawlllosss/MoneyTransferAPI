@@ -3,8 +3,8 @@
              version="2.0" xmlns="http://java.sun.com/xml/ns/persistence">
 
     <persistence-unit name="money_transfer" transaction-type="RESOURCE_LOCAL">
-        <class>client.entity.Client</class>
-        <class>account.entity.Account</class>
+        <class>pl.oczadly.money.api.client.entity.Client</class>
+        <class>pl.oczadly.money.api.account.entity.Account</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />
