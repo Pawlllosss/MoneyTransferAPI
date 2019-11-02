@@ -1,5 +1,9 @@
 package api.configuration;
 
+import account.control.AccountDAO;
+import account.control.AccountDAOImplementation;
+import account.control.AccountService;
+import account.control.AccountServiceImplementation;
 import client.control.ClientDAO;
 import client.control.ClientDAOImplementation;
 import client.control.ClientService;
@@ -18,6 +22,8 @@ public class ApiModule extends AbstractModule {
     protected void configure() {
         bind(ClientDAO.class).to(ClientDAOImplementation.class);
         bind(ClientService.class).to(ClientServiceImplementation.class);
+        bind(AccountDAO.class).to(AccountDAOImplementation.class);
+        bind(AccountService.class).to(AccountServiceImplementation.class);
 
         Gson gson = new GsonBuilder().create();
         bind(Gson.class).toInstance(gson);

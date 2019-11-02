@@ -1,18 +1,26 @@
 package client.boundary;
 
+import account.boundary.AccountMapperUtils;
+import account.entity.Account;
+import account.entity.dto.AccountResponseDTO;
+import api.controller.RestControllerWithExceptionHandling;
 import api.dto.ExceptionDTO;
 import client.control.ClientService;
 import client.entity.Client;
+import client.entity.dto.ClientResponseDTO;
 import client.entity.exception.ClientDoesNotExistException;
 import com.google.gson.Gson;
-import api.controller.RestControllerWithExceptionHandling;
 import org.eclipse.jetty.http.HttpStatus;
 import spark.ExceptionHandler;
 import spark.Request;
 import spark.Route;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import static api.controller.ControllerUtils.mapToExceptionDTO;
 import static api.controller.ControllerUtils.parseIdFromNamedQueryParams;
 import static spark.Spark.delete;
 import static spark.Spark.exception;
@@ -48,8 +56,28 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Client persistedClient = clientService.createClient(client);
 
             res.status(HttpStatus.CREATED_201);
-            return gson.toJson(persistedClient);
+            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(persistedClient);
+            return gson.toJson(clientResponseDTO);
         };
+    }
+
+    private ClientResponseDTO mapClientToClientResponseDTO(Client client) {
+        ClientResponseDTO clientResponseDTO = new ClientResponseDTO();
+        clientResponseDTO.setId(client.getId());
+        clientResponseDTO.setFirstName(client.getFirstName());
+        clientResponseDTO.setSurname(client.getSurname());
+
+        Set<AccountResponseDTO> accountResponseDTOs = mapClientAccountsToAccountResponseDTOs(client);
+        clientResponseDTO.setAccounts(accountResponseDTOs);
+
+        return clientResponseDTO;
+    }
+
+    private Set<AccountResponseDTO> mapClientAccountsToAccountResponseDTOs(Client client) {
+        Set<Account> accounts = client.getAccounts();
+        return  accounts.stream()
+                .map(AccountMapperUtils::mapToAccountResponseDTO)
+                .collect(Collectors.toSet());
     }
 
     private Client parseClientFromRequestBody(Request request) {
@@ -58,13 +86,23 @@ public class ClientController implements RestControllerWithExceptionHandling {
     }
 
     private Route setupGetAllClientsEndpoint() {
-        return (req, res) -> gson.toJson(clientService.getAllClients());
+        return (req, res) -> {
+            List<Client> clients = clientService.getAllClients();
+            List<ClientResponseDTO> clientResponseDTOs = clients.stream()
+                    .map(this::mapClientToClientResponseDTO)
+                    .collect(Collectors.toList());
+
+            return gson.toJson(clientResponseDTOs);
+        };
     }
 
     private Route setupGetClientByIdEndpoint() {
         return (req, res) -> {
             Long id = parseIdFromNamedQueryParams(req);
-            return gson.toJson(clientService.getClientById(id));
+            Client client = clientService.getClientById(id);
+            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(client);
+
+            return gson.toJson(clientResponseDTO);
         };
     }
 
@@ -73,9 +111,9 @@ public class ClientController implements RestControllerWithExceptionHandling {
             Long id = parseIdFromNamedQueryParams(req);
             Client client = parseClientFromRequestBody(req);
             Client updatedClient = clientService.updateClient(id, client);
+            ClientResponseDTO clientResponseDTO = mapClientToClientResponseDTO(updatedClient);
 
-            res.status(HttpStatus.OK_200);
-            return gson.toJson(updatedClient);
+            return gson.toJson(clientResponseDTO);
         };
     }
 
@@ -102,10 +140,5 @@ public class ClientController implements RestControllerWithExceptionHandling {
             res.status(HttpStatus.NOT_FOUND_404);
             res.body(gson.toJson(exceptionDTO));
         };
-    }
-
-    private ExceptionDTO mapToExceptionDTO(ClientDoesNotExistException exception) {
-        String message = exception.getMessage();
-        return new ExceptionDTO(message);
     }
 }

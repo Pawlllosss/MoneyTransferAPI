@@ -34,8 +34,7 @@ public class ClientServiceImplementation implements ClientService {
 
     @Override
     public Client updateClient(Long id, Client client) {
-        clientDAO.update(id, client);
-        return client;
+        return clientDAO.update(id, client);
     }
 
     @Override

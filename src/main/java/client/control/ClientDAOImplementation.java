@@ -37,13 +37,16 @@ public class ClientDAOImplementation implements ClientDAO {
     }
 
     @Override
-    public void update(Long id, Client client) {
-        getClientOrThrowException(id);
-        client.setId(id);
+    public Client update(Long id, Client client) {
+        Client clientToModify = getClientOrThrowException(id);
+        clientToModify.setFirstName(client.getFirstName());
+        clientToModify.setSurname(client.getSurname());
 
         entityManager.getTransaction().begin();
-        entityManager.merge(client);
+        entityManager.merge(clientToModify);
         entityManager.getTransaction().commit();
+
+        return clientToModify;
     }
 
     private Client getClientOrThrowException(Long id) {

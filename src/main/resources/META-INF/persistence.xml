@@ -4,6 +4,7 @@
 
     <persistence-unit name="money_transfer" transaction-type="RESOURCE_LOCAL">
         <class>client.entity.Client</class>
+        <class>account.entity.Account</class>
 
         <properties>
             <property name="javax.persistence.jdbc.driver" value="org.h2.Driver" />

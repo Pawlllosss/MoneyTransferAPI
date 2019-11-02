@@ -63,8 +63,8 @@ class ClientServiceImplementationTest {
 
         List<Client> clientsFromService = clientService.getAllClients();
 
+        verifyClientDAOGetAllCalledOnce();
         final int expectedClientsSize = 3;
-        verifyClientDAOAllCalledOnce();
         assertThat(clientsFromService).hasSize(expectedClientsSize);
         assertThat(clientsFromService).extracting(Client::getFirstName)
                 .containsOnly(CLIENT_1_FIRST_NAME, CLIENT_2_FIRST_NAME, CLIENT_3_FIRST_NAME);
@@ -82,7 +82,7 @@ class ClientServiceImplementationTest {
         given(clientDAO.getAll()).willReturn(allClients);
     }
 
-    private void verifyClientDAOAllCalledOnce() {
+    private void verifyClientDAOGetAllCalledOnce() {
         verify(clientDAO, times(1)).getAll();
     }
 
