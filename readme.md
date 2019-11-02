@@ -329,7 +329,7 @@ Usage of endpoints is shown in Postman script contained in `/doc` folder.
     
 * **Error response:**
 
-  * **Code:** 400
+  * **Code:** 404
   * **Content:** 
   ```
     {
@@ -379,7 +379,7 @@ Usage of endpoints is shown in Postman script contained in `/doc` folder.
     
 * **Error response:**
 
-  * **Code:** 400
+  * **Code:** 404
   * **Content:** 
   ```
     {
@@ -444,7 +444,7 @@ Usage of endpoints is shown in Postman script contained in `/doc` folder.
     
 * **Error response:**
 
-  * **Code:** 400
+  * **Code:** 404
   * **Content:** 
   ```
     {
