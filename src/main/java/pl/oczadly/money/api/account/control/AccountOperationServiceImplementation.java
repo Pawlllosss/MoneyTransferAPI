@@ -45,6 +45,20 @@ public class AccountOperationServiceImplementation implements AccountOperationSe
         return account;
     }
 
+    private BigDecimal getOperationAmount(AccountOperationDTO accountOperationDTO) {
+        Double amountAsDouble = accountOperationDTO.getAmount();
+        return convertDoubleToBigDecimal(amountAsDouble);
+    }
+
+    private boolean isAmountBiggerThanZero(BigDecimal amount) {
+        return amount.compareTo(BigDecimal.ZERO) >= 1;
+    }
+
+    private Account mapAccountOperationDTOToAccount(AccountOperationDTO accountOperationDTO) {
+        Long id = accountOperationDTO.getId();
+        return accountService.getAccountById(id);
+    }
+
     private void tryToWithdraw(BigDecimal amount, Account account) {
         Lock accountLock = account.getLock();
 
@@ -76,28 +90,14 @@ public class AccountOperationServiceImplementation implements AccountOperationSe
         accountDAO.update(accountId, account);
     }
 
-    private BigDecimal getOperationAmount(AccountOperationDTO accountOperationDTO) {
-        Double amountAsDouble = accountOperationDTO.getAmount();
-        return convertDoubleToBigDecimal(amountAsDouble);
-    }
-
-    private boolean isAmountBiggerThanZero(BigDecimal amount) {
-        return amount.compareTo(BigDecimal.ZERO) >= 1;
-    }
-
-    private Account mapAccountOperationDTOToAccount(AccountOperationDTO accountOperationDTO) {
-        Long id = accountOperationDTO.getId();
-        return accountService.getAccountById(id);
+    private boolean isEnoughFundsToPerformWithdraw(Account account, BigDecimal amount) {
+        BigDecimal accountBalance = account.getBalance();
+        return accountBalance.compareTo(amount) >= 0;
     }
 
     private BigDecimal getAccountBalanceAfterWithdrawal(Account account, BigDecimal amount) {
         BigDecimal accountBalance = account.getBalance();
         return accountBalance.subtract(amount);
-    }
-
-    private boolean isEnoughFundsToPerformWithdraw(Account account, BigDecimal amount) {
-        BigDecimal accountBalance = account.getBalance();
-        return accountBalance.compareTo(amount) >= 0;
     }
 
     @Override

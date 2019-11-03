@@ -11,6 +11,7 @@ On accounts following operations can be performed: withdraw, deposit and transfe
    * Java 9
    * Spark Java
    * Guice
+   * Gradle
    * JUnit 5
    * Mockito
    * Hamcrest
@@ -259,7 +260,7 @@ Usage of endpoints is shown in Postman script contained in `/doc` folder.
   * **Content:** 
   ```
     {
-        "message": "Account with the following id does not exists: 3"
+        "message": "Account with the following id does not exist: 3"
     }
   ```
 

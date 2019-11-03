@@ -14,5 +14,4 @@ public interface AccountService {
     Account getAccountById(Long id);
 
     void deleteAccount(Long id);
-
 }

@@ -22,6 +22,5 @@ public class AccountControllerTestInitializer {
         AccountController accountController = new AccountController(accountService, accountOperationService, gson);
         accountController.setupEndpoints();
         accountController.setExceptionHandling();
-
     }
 }
