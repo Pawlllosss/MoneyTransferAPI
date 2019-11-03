@@ -2,6 +2,7 @@ package pl.oczadly.money.api.account;
 
 import pl.oczadly.money.api.account.entity.Account;
 import pl.oczadly.money.api.account.entity.dto.AccountCreateDTO;
+import pl.oczadly.money.api.account.entity.dto.AccountOperationDTO;
 import pl.oczadly.money.api.client.entity.Client;
 
 import java.math.BigDecimal;
@@ -27,4 +28,11 @@ public class AccountTestUtils {
         return accountCreateDTO;
     }
 
+    public static AccountOperationDTO createAccountOperationDTO(Long id, Double amount) {
+        AccountOperationDTO accountOperationDTO = new AccountOperationDTO();
+        accountOperationDTO.setId(id);
+        accountOperationDTO.setAmount(amount);
+
+        return accountOperationDTO;
+    }
 }

@@ -1,3 +1,5 @@
+[![Builds Status](https://travis-ci.org/Pawlllosss/MoneyTransferAPI.svg?branch=master)](https://travis-ci.org/Pawlllosss/MoneyTransferAPI)
+
 ## Description
 
 Api consists of client service, account service and account operations service. Each client can have multiple accounts.
@@ -9,6 +11,7 @@ On accounts following operations can be performed: withdraw, deposit and transfe
    * Java 9
    * Spark Java
    * Guice
+   * Gradle
    * JUnit 5
    * Mockito
    * Hamcrest
@@ -257,7 +260,7 @@ Usage of endpoints is shown in Postman script contained in `/doc` folder.
   * **Content:** 
   ```
     {
-        "message": "Account with the following id does not exists: 3"
+        "message": "Account with the following id does not exist: 3"
     }
   ```
 
