@@ -1,3 +1,5 @@
+[![Builds Status](https://travis-ci.org/Pawlllosss/MoneyTransferAPI.svg?branch=master)](https://travis-ci.org/Pawlllosss/MoneyTransferAPI)
+
 ## Description
 
 Api consists of client service, account service and account operations service. Each client can have multiple accounts.
