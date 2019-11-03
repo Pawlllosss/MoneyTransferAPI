@@ -5,12 +5,14 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import pl.oczadly.money.api.account.entity.dto.AccountCreateDTO;
+import pl.oczadly.money.api.account.entity.dto.AccountOperationDTO;
 
 import java.math.BigDecimal;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
 import static pl.oczadly.money.api.account.AccountTestUtils.createAccountCreateDTO;
+import static pl.oczadly.money.api.account.AccountTestUtils.createAccountOperationDTO;
 import static spark.Spark.awaitInitialization;
 import static spark.Spark.stop;
 
@@ -26,6 +28,9 @@ class AccountControllerTest {
     static final Long CLIENT_ID = 1L;
 
     private static String ACCOUNT_PATH = "/account";
+    private static final String WITHDRAW_PATH = "/withdraw";
+    private static final String DEPOSIT_PATH = "/deposit";
+    private static final String TRANSFER_PATH = "/transfer";
     private static Integer PORT = 4567;
 
     @BeforeAll
@@ -81,6 +86,54 @@ class AccountControllerTest {
                 .get(ACCOUNT_PATH + "/" + NOT_EXISTING_ID)
                 .then()
                 .statusCode(HttpStatus.NOT_FOUND_404);
+    }
+
+    @Test
+    void shouldReturn400WhenTryingToWithdrawZeroMoney() {
+        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 0d);
+
+        given().body(accountOperationDTO)
+                .when()
+                .port(PORT)
+                .post(ACCOUNT_PATH + WITHDRAW_PATH)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    void shouldReturn400WhenNotEnoughFundsToPerformWithdraw() {
+        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, ACCOUNT_1_BALANCE.doubleValue());
+
+        given().body(accountOperationDTO)
+                .when()
+                .port(PORT)
+                .post(ACCOUNT_PATH + WITHDRAW_PATH)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    void shouldReturn400WhenTryingToDepositZeroMoney() {
+        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 0d);
+
+        given().body(accountOperationDTO)
+                .when()
+                .port(PORT)
+                .post(ACCOUNT_PATH + DEPOSIT_PATH)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST_400);
+    }
+
+    @Test
+    void shouldReturn400WhenTryingToTransferZeroMoney() {
+        AccountOperationDTO accountOperationDTO = createAccountOperationDTO(ACCOUNT_1_ID, 0d);
+
+        given().body(accountOperationDTO)
+                .when()
+                .port(PORT)
+                .post(ACCOUNT_PATH + TRANSFER_PATH)
+                .then()
+                .statusCode(HttpStatus.BAD_REQUEST_400);
     }
 
     @Test
